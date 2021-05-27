@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - preConditions:
+      - dbms:
+          type: postgresql
+  - changeSet:
+      id: 0
+      author: Andrey Skvortsov
+      comment: Create Schema if Required
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: f
+            sql: SELECT exists(select schema_name FROM information_schema.schemata WHERE schema_name = 'ttmr');
+      changes:
+        - sqlFile:
+            path: master/TT-000.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: rollback/TT-000.rollback.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: 0.test
+      author: Andrey Skvortsov
+      comment: Check schema exists (sample testing data upload)
+      preConditions:
+        - onFail: MARK_RAN
+        - changeLogPropertyDefined:
+            property: test
+      changes:
+        - sqlFile:
+            path: test/TT-000.test.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: 1
+      author: Andrey Skvortsov
+      comment: Create tables
+      changes:
+        - sqlFile:
+            path: master/TT-001.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: rollback/TT-001.rollback.sql
+            relativeToChangelogFile: true
