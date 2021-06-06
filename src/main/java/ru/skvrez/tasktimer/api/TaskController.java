@@ -1,6 +1,7 @@
 package ru.skvrez.tasktimer.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,14 +11,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.skvrez.tasktimer.service.model.base.PageModel;
 import ru.skvrez.tasktimer.service.model.create.TaskCreateDto;
 import ru.skvrez.tasktimer.service.model.get.TaskGetDto;
 import ru.skvrez.tasktimer.service.model.update.TaskUpdateDto;
 import ru.skvrez.tasktimer.service.service.TaskService;
+import ru.skvrez.tasktimer.specification.FilterConstraint;
 
 import javax.websocket.server.PathParam;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -32,10 +37,17 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping()
-    public List<TaskGetDto> allTasks() {
-        return taskService.getAllTasks();
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public PageModel<TaskGetDto> allPageTasks(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size,
+            @RequestParam("sort") String sort,
+            @RequestParam("order") String order,
+            @RequestParam(name = "fl", required = false) List<FilterConstraint> fl) {
+        System.out.println(fl);
+        return taskService.getAllTasks(page, size, sort, order, fl);
     }
+
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
