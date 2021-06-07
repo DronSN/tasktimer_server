@@ -5,7 +5,6 @@ import ru.skvrez.tasktimer.service.model.create.TaskCreateDto;
 import ru.skvrez.tasktimer.service.model.get.TaskGetDto;
 import ru.skvrez.tasktimer.service.model.update.TaskUpdateDto;
 import ru.skvrez.tasktimer.specification.FilterConstraint;
-
 import java.util.List;
 
 public interface TaskService {
