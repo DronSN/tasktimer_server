@@ -1,7 +1,6 @@
 package ru.skvrez.tasktimer.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,14 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skvrez.tasktimer.service.model.base.PageModel;
 import ru.skvrez.tasktimer.service.model.create.TaskCreateDto;
+import ru.skvrez.tasktimer.service.model.get.TaskDurationGetDto;
 import ru.skvrez.tasktimer.service.model.get.TaskGetDto;
 import ru.skvrez.tasktimer.service.model.update.TaskUpdateDto;
 import ru.skvrez.tasktimer.service.service.TaskService;
 import ru.skvrez.tasktimer.specification.FilterConstraint;
-
 import javax.websocket.server.PathParam;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -37,6 +35,22 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @GetMapping(
+            path = "/{id}/duration",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaskDurationGetDto getTaskDuration(@PathVariable Integer id) {
+        return taskService.getTask(id);
+    }
+
+    @GetMapping(
+            path = "/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TaskDurationGetDto> allTask(@RequestParam("sort") String sort,
+                                            @RequestParam("order") String order,
+                                            @RequestParam(name = "fl", required = false) List<FilterConstraint> fl) {
+        return taskService.getAllTasks(sort, order, fl);
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PageModel<TaskGetDto> allPageTasks(
             @RequestParam("page") Integer page,
@@ -44,7 +58,6 @@ public class TaskController {
             @RequestParam("sort") String sort,
             @RequestParam("order") String order,
             @RequestParam(name = "fl", required = false) List<FilterConstraint> fl) {
-        System.out.println(fl);
         return taskService.getAllTasks(page, size, sort, order, fl);
     }
 

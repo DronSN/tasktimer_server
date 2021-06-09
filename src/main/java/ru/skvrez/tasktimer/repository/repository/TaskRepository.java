@@ -7,4 +7,5 @@ import ru.skvrez.tasktimer.repository.entity.Task;
 public interface TaskRepository extends PagingAndSortingRepository<Task, Integer>, JpaSpecificationExecutor<Task> {
 
     void deleteAllByIdIn(Iterable<Integer> ids);
+
 }

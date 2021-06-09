@@ -55,3 +55,15 @@ databaseChangeLog:
         - sqlFile:
             path: rollback/TT-002.rollback.sql
             relativeToChangelogFile: true
+  - changeSet:
+      id: 3
+      author: Andrey Skvortsov
+      comment: Create table task-interval
+      changes:
+        - sqlFile:
+            path: master/TT-003.sql
+            relativeToChangelogFile: true
+      rollback:
+        - sqlFile:
+            path: rollback/TT-003.rollback.sql
+            relativeToChangelogFile: true

@@ -26,7 +26,7 @@ CREATE TABLE ttmr.tag_task (
                            task_id           integer NOT NULL
 );
 ALTER TABLE ttmr.tag_task
-    ADD CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES ttmr.tag (tag_id);
+    ADD CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES ttmr.tag (tag_id) ON DELETE CASCADE;
 
 --Tasks
 CREATE SEQUENCE ttmr.task_seq;
@@ -49,4 +49,4 @@ ALTER TABLE ttmr.task
     ADD CONSTRAINT fk_task_status FOREIGN KEY (task_status_id) REFERENCES ttmr.task_status (task_status_id);
 
 ALTER TABLE ttmr.tag_task
-    ADD CONSTRAINT fk_task FOREIGN KEY (task_id) REFERENCES ttmr.task (task_id);
+    ADD CONSTRAINT fk_task FOREIGN KEY (task_id) REFERENCES ttmr.task (task_id) ON DELETE CASCADE;

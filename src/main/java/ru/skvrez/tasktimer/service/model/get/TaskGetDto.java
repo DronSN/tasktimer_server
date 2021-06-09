@@ -3,11 +3,12 @@ package ru.skvrez.tasktimer.service.model.get;
 import ru.skvrez.tasktimer.repository.entity.TaskStatus;
 import ru.skvrez.tasktimer.service.model.base.AbstractTaskDto;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TaskGetDto extends AbstractTaskDto {
 
     private Integer id;
-    private String[] tags;
+    private List<String> tags;
     private TaskStatus status;
     private LocalDateTime start;
     private LocalDateTime stop;
@@ -20,11 +21,11 @@ public class TaskGetDto extends AbstractTaskDto {
         this.id = id;
     }
 
-    public String[] getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(String[] tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

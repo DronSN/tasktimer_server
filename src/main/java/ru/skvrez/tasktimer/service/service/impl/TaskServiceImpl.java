@@ -9,13 +9,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skvrez.tasktimer.repository.entity.Task;
+import ru.skvrez.tasktimer.repository.entity.TaskDuration;
 import ru.skvrez.tasktimer.repository.entity.TaskInterval;
 import ru.skvrez.tasktimer.repository.entity.TaskStatus;
+import ru.skvrez.tasktimer.repository.repository.TaskDurationRepository;
 import ru.skvrez.tasktimer.repository.repository.TaskIntervalRepository;
 import ru.skvrez.tasktimer.repository.repository.TaskRepository;
 import ru.skvrez.tasktimer.service.mapper.TaskMapper;
 import ru.skvrez.tasktimer.service.model.base.PageModel;
 import ru.skvrez.tasktimer.service.model.create.TaskCreateDto;
+import ru.skvrez.tasktimer.service.model.get.TaskDurationGetDto;
 import ru.skvrez.tasktimer.service.model.get.TaskGetDto;
 import ru.skvrez.tasktimer.service.model.update.TaskUpdateDto;
 import ru.skvrez.tasktimer.service.service.TaskService;
@@ -28,22 +31,30 @@ import java.util.List;
 @Service
 public class TaskServiceImpl implements TaskService {
 
+    private final TaskDurationRepository taskDurationRepository;
     private final TaskRepository taskRepository;
     private final TaskIntervalRepository taskIntervalRepository;
     private final TaskMapper taskMapper;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository, TaskIntervalRepository taskIntervalRepository,
-                           TaskMapper taskMapper) {
+    public TaskServiceImpl(TaskDurationRepository taskDurationRepository, TaskRepository taskRepository,
+                           TaskIntervalRepository taskIntervalRepository, TaskMapper taskMapper) {
+        this.taskDurationRepository = taskDurationRepository;
         this.taskRepository = taskRepository;
         this.taskIntervalRepository = taskIntervalRepository;
         this.taskMapper = taskMapper;
     }
 
     @Override
-    public List<TaskGetDto> getAllTasks() {
+    public TaskDurationGetDto getTask(Integer id) {
+        TaskDuration taskDuration = taskDurationRepository.findById(id).orElseThrow();
+        return taskMapper.toGetDto(taskDuration);
+    }
+
+    @Override
+    public List<TaskDurationGetDto> getAllTasks(String sortField, String sortOrder, List<FilterConstraint> filter) {
         List<Task> taskList = (List<Task>) taskRepository.findAll();
-        return taskMapper.toGetDtoList(taskList);
+        return null;
     }
 
     @Override
@@ -71,11 +82,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskGetDto updateTask(TaskUpdateDto taskDto) {
-        TaskStatus currentStatus = getTaskStatusById(taskDto.getId());
-        Task forSavingTask = taskMapper.toTask(taskDto);
-        forSavingTask.setStatus(currentStatus);
-        Task savedTaskDto = taskRepository.save(taskMapper.toTask(taskDto));
-        return taskMapper.toGetDto(savedTaskDto);
+        Task task = getTaskById(taskDto.getId());
+        Task savedTask = taskRepository.save(taskMapper.toTask(taskDto, task));
+        return taskMapper.toGetDto(savedTask);
     }
 
     @Override
@@ -154,10 +163,6 @@ public class TaskServiceImpl implements TaskService {
     private Task getTaskById(Integer id) {
         return taskRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Task entity by id %s not found in database", id)));
-    }
-
-    private TaskStatus getTaskStatusById(Integer id) {
-        return getTaskById(id).getStatus();
     }
 
     private boolean isTaskStarted(Integer taskId) {
